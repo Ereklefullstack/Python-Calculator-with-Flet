@@ -1,168 +1,96 @@
 import flet as ft
 
-def main(page: ft.page):
+def main(page: ft.Page):
     page.bgcolor = "#000000"
     page.title = "Mohsen"
-    page.window_height = 320
+    page.window_height = 340
     page.window_width = 350
-    #page.window_resizable = False
+    calculated = False
+
+    def click(e):
+        nonlocal calculated
+        if e.control.data in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '+', '*', '-', '/']:
+            if calculated and e.control.data.isdigit():
+                txt.value = ''
+                calculated = False
+            if e.control.data == '0':
+                if not txt.value or txt.value[-1] in ['+', '-', '*', '/', '(']:
+                    return 
+            
+            if e.control.data == ')':
+                if not txt.value or (txt.value and txt.value[-1] not in ')'):
+                    txt.value = str(txt.value) + ')'
+            elif e.control.data == '(':
+                if txt.value and txt.value[-1].isdigit():
+                    txt.value += '*'
+                txt.value += '('
+            else:
+                txt.value = str(txt.value) + str(e.control.data)
+            page.update()
+        elif e.control.data == '.':
+            if calculated:
+                txt.value = '0.'
+                calculated = False
+            elif txt.value and not txt.value.split()[-1].count('.'):
+                if txt.value and txt.value[-1].isdigit():
+                    txt.value = str(txt.value) + '.'
+                else:
+                    txt.value = str(txt.value) + '0.'
+            elif not txt.value:
+                txt.value = '0.'
+            page.update()
+        elif e.control.data == '=':
+            try:
+                txt.value = str(eval(txt.value))
+                calculated = True
+            except ZeroDivisionError:
+                txt.value = "Error"
+                calculated = False
+            except Exception as ex:
+                txt.value = f"Error"
+                calculated = False
+            page.update()
+        elif e.control.data == 'c':
+            txt.value = ''
+            calculated = False
+            page.update()
+        elif e.control.data == '<':
+            txt.value = txt.value[:-1]
+            page.update()
+    
     txt = ft.TextField(
-        border_color="#FFFFFF"
+        border_color="#FFFFFF",
+        color = "#FFFFFF",
+        read_only=True,
+        text_size=30
     )
     page.add(txt)
-    btn_e = ft.ElevatedButton(
-        text="<",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_p_o = ft.ElevatedButton(
-        text="(",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_p_c = ft.ElevatedButton(
-        text=")",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_div = ft.ElevatedButton(
-        text="/",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    r1 = ft.Row(
-        controls=[btn_e, btn_p_o, btn_p_c, btn_div],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        
-    )
-    page.add(r1)
-    
-    
-    btn_7 = ft.ElevatedButton(
-        text="7",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_8 = ft.ElevatedButton(
-        text="8",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_9 = ft.ElevatedButton(
-        text="9",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_zarb = ft.ElevatedButton(
-        text="X",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    r2 = ft.Row(
-        controls=[btn_7, btn_8, btn_9, btn_zarb],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-    page.add(r2)
-    
-    
-    btn_4 = ft.ElevatedButton(
-        text="4",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_5 = ft.ElevatedButton(
-        text="5",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_6 = ft.ElevatedButton(
-        text="6",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_mine = ft.ElevatedButton(
-        text="-",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    r3 = ft.Row(
-        controls=[btn_5, btn_6, btn_7, btn_mine],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-    page.add(r3)
-    
-    
-    btn_1 = ft.ElevatedButton(
-        text="1",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_2 = ft.ElevatedButton(
-        text="2",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_3 = ft.ElevatedButton(
-        text="3",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_plus = ft.ElevatedButton(
-        text="+",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    r4 = ft.Row(
-        controls=[btn_1, btn_2, btn_3, btn_plus],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-    page.add(r4)
-    
-    
-    btn_C = ft.ElevatedButton(
-        text="C",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_0 = ft.ElevatedButton(
-        text="0",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_dot = ft.ElevatedButton(
-        text=".",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    btn_eq = ft.ElevatedButton(
-        text="=",
-        bgcolor="#FFFFFF",
-        color= "#232323",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
-    )
-    r1 = ft.Row(
-        controls=[btn_C, btn_0, btn_dot, btn_eq],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-    page.add(r1)
-    
+
+    buttons = [
+        ('<', '<', '#EB5B00'), ('(', '(', '#EB5B00'), (')', ')', '#EB5B00'), ('/', '/', '#EB5B00'),
+        ('7', '7', '#06D001'), ('8', '8', '#06D001'), ('9', '9', '#06D001'), ('*', '*', '#EB5B00'),
+        ('4', '4', '#06D001'), ('5', '5', '#06D001'), ('6', '6', '#06D001'), ('-', '-', '#EB5B00'),
+        ('1', '1', '#06D001'), ('2', '2', '#06D001'), ('3', '3', '#06D001'), ('+', '+', '#EB5B00'),
+        ('C', 'c', '#FF0000'), ('0', '0', '#06D001'), ('.', '.', '#06D001'), ('=', '=', '#EB5B00')
+    ]
+
+    rows = [buttons[i:i + 4] for i in range(0, len(buttons), 4)]
+
+    for row in rows:
+        r = ft.Row(
+            controls=[
+                ft.ElevatedButton(
+                    text=text,
+                    data=data,
+                    on_click=click,
+                    bgcolor=bgcolor,
+                    color="#232323",
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=0))
+                )
+                for text, data, bgcolor in row
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        )
+        page.add(r)
+
 ft.app(target=main)
